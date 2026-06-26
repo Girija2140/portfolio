@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Girija M | Portfolio</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0d0d1a;
+      color: #e2e2f0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    :root {
+      --bg: #0d0d1a;
+      --bg2: #12122a;
+      --card: #161630;
+      --border: #252545;
+      --purple: #7c3aed;
+      --purple-light: #a78bfa;
+      --purple-dim: #4c1d95;
+      --text: #e2e2f0;
+      --text-muted: #9090b0;
+      --sidebar-w: 200px;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      position: fixed; top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: #0a0a18;
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      align-items: flex-start;
+      padding: 28px 0;
+      z-index: 100;
+    }
+    .logo {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      border: 2px solid var(--purple);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 16px;
+      color: var(--purple-light);
+      margin: 0 0 40px 24px;
+      background: rgba(124,58,237,.1);
+    }
+    .nav-links { width: 100%; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 24px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 14px; font-weight: 500;
+      transition: all .2s;
+      position: relative;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-item:hover, .nav-item.active {
+      color: var(--text);
+      background: rgba(124,58,237,.1);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute; left: 0; top: 0;
+      width: 3px; height: 100%;
+      background: var(--purple);
+      border-radius: 0 2px 2px 0;
+    }
+    .nav-item.active .dot {
+      display: block;
+    }
+    .dot {
+      display: none;
+      position: absolute; right: 16px; top: 50%;
+      transform: translateY(-50%);
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--purple);
+    }
+    .nav-icon { width: 18px; text-align: center; }
+    .social-links {
+      padding: 0 24px 8px;
+      display: flex; gap: 16px;
+    }
+    .social-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color .2s;
+      display: flex; align-items: center;
+    }
+    .social-links a:hover { color: var(--purple-light); }
+    .copyright {
+      padding: 12px 24px 0;
+      font-size: 11px; color: var(--text-muted);
+    }
+
+    /* ── Main ── */
+    #main {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; justify-content: flex-end;
+      padding: 18px 40px;
+      background: rgba(13,13,26,.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .theme-toggle {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 12px;
+      display: flex; gap: 8px; align-items: center;
+      cursor: pointer;
+    }
+    .theme-toggle span {
+      font-size: 16px; transition: opacity .2s;
+    }
+
+    /* ── Sections ── */
+    section { display: none; padding: 0 40px 60px; }
+    section.active { display: block; }
+
+    /* ── HOME ── */
+    .hero {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 64px 0 56px;
+      gap: 40px;
+    }
+    .hero-text { flex: 1; }
+    .hero-text .greet {
+      font-size: 22px; color: var(--text-muted);
+      margin-bottom: 10px; font-weight: 400;
+    }
+    .hero-text h1 {
+      font-size: clamp(48px, 6vw, 72px);
+      font-weight: 800; line-height: 1.05;
+      color: #fff; letter-spacing: -1px;
+      margin-bottom: 14px;
+    }
+    .hero-text .role {
+      font-size: 20px;
+      color: var(--purple-light);
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+    .hero-text p {
+      color: var(--text-muted);
+      font-size: 15px; line-height: 1.7;
+      max-width: 420px;
+      margin-bottom: 32px;
+    }
+    .btn-resume {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 13px 28px;
+      border: 1.5px solid var(--text);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 14px; font-weight: 500;
+      cursor: pointer;
+      background: transparent;
+      text-decoration: none;
+      transition: all .25s;
+    }
+    .btn-resume:hover {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: #fff;
+    }
+    .hero-img {
+      width: 340px; height: 340px; flex-shrink: 0;
+      position: relative;
+    }
+    .hero-img .circle-bg {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 60% 40%, #2e1065 0%, #1a0a3a 60%, transparent 100%);
+      border: 1px solid rgba(124,58,237,.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-img .circle-bg img {
+      width: 100%; height: 100%;
+      object-fit: cover; border-radius: 50%;
+      display: block;
+    }
+    .hero-img .placeholder-avatar {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2e1065 0%, #4c1d95 50%, #7c3aed 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 80px; color: rgba(255,255,255,.3);
+    }
+    /* accent dots */
+    .hero-img::before {
+      content: '';
+      position: absolute; top: 10px; right: -10px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--purple);
+    }
+    /* accent line */
+    .hero-img::after {
+      content: '';
+      position: absolute; bottom: 30px; right: -30px;
+      width: 100px; height: 100px;
+      border-right: 2px solid var(--purple);
+      border-bottom: 2px solid var(--purple);
+      border-radius: 0 0 40px 0;
+    }
+
+    /* Cards row */
+    .cards-row {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr 1.4fr;
+      gap: 20px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .card-title {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--purple-light);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .card-divider {
+      width: 28px; height: 2px;
+      background: var(--purple);
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+    .card p {
+      font-size: 13.5px; color: var(--text-muted);
+      line-height: 1.75;
+    }
+    .btn-read {
+      margin-top: 20px;
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 13px; color: var(--text);
+      cursor: pointer; background: transparent;
+      transition: all .2s;
+    }
+    .btn-read:hover { border-color: var(--purple); color: var(--purple-light); }
+
+    /* Skills card */
+    .skill-bar-row {
+      display: flex; align-items: center;
+      gap: 12px; margin-bottom: 16px;
+    }
+    .skill-icon { font-size: 22px; width: 28px; text-align: center; flex-shrink: 0; }
+    .skill-name { font-size: 13.5px; width: 80px; flex-shrink: 0; }
+    .skill-bar-bg {
+      flex: 1; height: 5px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .skill-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple) 0%, var(--purple-light) 100%);
+      border-radius: 99px;
+      transition: width 1s ease;
+    }
+    .skill-pct { font-size: 12px; color: var(--text-muted); width: 32px; text-align: right; }
+
+    /* Projects card */
+    .proj-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px;
+    }
+    .view-all { font-size: 12px; color: var(--text-muted); cursor: pointer; transition: color .2s; }
+    .view-all:hover { color: var(--purple-light); }
+    .proj-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .proj-item:last-child { border-bottom: none; }
+    .proj-thumb {
+      width: 56px; height: 44px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0;
+      background: linear-gradient(135deg, #1e1040, #3b0764);
+    }
+    .proj-info h4 { font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+    .proj-info p { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 40px; padding-top: 48px;
+    }
+    .about-left .section-label {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--purple-light); margin-bottom: 14px;
+    }
+    .about-left h2 { font-size: 36px; font-weight: 800; color: #fff; margin-bottom: 20px; }
+    .about-left p { font-size: 14px; color: var(--text-muted); line-height: 1.8; margin-bottom: 16px; }
+    .info-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-top: 28px;
+    }
+    .info-item .label { font-size: 11px; color: var(--purple-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .info-item .value { font-size: 14px; font-weight: 500; }
+    .about-img-wrap {
+      display: flex; justify-content: center; align-items: flex-start;
+      padding-top: 10px;
+    }
+    .about-img-wrap .circle-lg {
+      width: 300px; height: 300px; border-radius: 50%;
+      background: linear-gradient(135deg, #2e1065 0%, #4c1d95 60%, #7c3aed 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 90px; color: rgba(255,255,255,.25);
+      border: 2px solid rgba(124,58,237,.4);
+    }
+
+    /* ── SKILLS ── */
+    .skills-section { padding-top: 48px; }
+    .section-heading { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .section-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+    .skills-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 32px 60px;
+    }
+    .skill-full-row { margin-bottom: 10px; }
+    .skill-full-header {
+      display: flex; justify-content: space-between;
+      font-size: 13.5px; margin-bottom: 8px;
+    }
+    .skill-full-bar-bg {
+      height: 6px; background: var(--border); border-radius: 99px; overflow: hidden;
+    }
+    .skill-full-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple) 0%, var(--purple-light) 100%);
+      border-radius: 99px;
+    }
+    .tech-chips {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 40px;
+    }
+    .chip {
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 13px; color: var(--text-muted);
+      background: var(--card);
+    }
+
+    /* ── PROJECTS ── */
+    .projects-section { padding-top: 48px; }
+    .projects-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; margin-top: 36px;
+    }
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: transform .2s, border-color .2s;
+    }
+    .project-card:hover { transform: translateY(-4px); border-color: var(--purple); }
+    .project-card .thumb {
+      width: 100%; height: 160px;
+      background: linear-gradient(135deg, #1e1040, #3b0764);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; color: rgba(255,255,255,.2);
+    }
+    .project-card .thumb.i { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); }
+    .project-card .thumb.p { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
+    .project-card .thumb.w { background: linear-gradient(135deg, #0d324d, #7f5a83, #0d324d); }
+    .project-card .thumb.l { background: linear-gradient(135deg, #1f4037, #99f2c8, #1f4037); }
+    .project-card .info { padding: 22px; }
+    .project-card .info h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .project-card .info p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px; font-weight: 500;
+      background: rgba(124,58,237,.15);
+      color: var(--purple-light);
+      border: 1px solid rgba(124,58,237,.3);
+    }
+
+    /* ── CONTACT ── */
+    .contact-section { padding-top: 48px; }
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 40px; margin-top: 36px;
+    }
+    .contact-info h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .contact-info p { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 28px; }
+    .contact-item {
+      display: flex; gap: 14px; align-items: center;
+      margin-bottom: 18px;
+    }
+    .contact-icon {
+      width: 42px; height: 42px;
+      background: rgba(124,58,237,.15);
+      border: 1px solid rgba(124,58,237,.3);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .contact-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .contact-val { font-size: 14px; font-weight: 500; }
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .form-group input,
+    .form-group textarea {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s;
+      resize: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--purple); }
+    .btn-send {
+      padding: 13px;
+      background: var(--purple);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+      font-family: inherit;
+    }
+    .btn-send:hover { background: #6d28d9; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      :root { --sidebar-w: 0px; }
+      #sidebar { display: none; }
+      #main { margin-left: 0; }
+      .hero { flex-direction: column-reverse; padding: 32px 0 40px; }
+      .hero-img { width: 220px; height: 220px; }
+      .cards-row { grid-template-columns: 1fr; }
+      .about-grid, .skills-grid, .projects-grid, .contact-grid { grid-template-columns: 1fr; }
+      section { padding: 0 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const NAV = [
+      { id: 'home',     label: 'Home',     icon: '🏠' },
+      { id: 'about',    label: 'About',    icon: '👤' },
+      { id: 'skills',   label: 'Skills',   icon: '</>' },
+      { id: 'projects', label: 'Projects', icon: '📁' },
+      { id: 'contact',  label: 'Contact',  icon: '✉' },
+    ];
+
+    const SKILLS = [
+      { name: 'HTML',        pct: 90, icon: '🟧' },
+      { name: 'CSS',         pct: 85, icon: '🟦' },
+      { name: 'JavaScript',  pct: 80, icon: '🟨' },
+      { name: 'React',       pct: 75, icon: '⚛️' },
+      { name: 'Git & GitHub',pct: 70, icon: '⬛' },
+      { name: 'IoT / Arduino',pct: 65, icon: '🔌' },
+    ];
+
+    const PROJECTS = [
+      {
+        title: 'Smart Irrigation System',
+        desc: 'IoT based smart irrigation system using soil moisture sensor to automate watering.',
+        tags: ['IoT', 'Arduino', 'Sensors'],
+        cls: 'i', emoji: '🌱',
+      },
+      {
+        title: 'Portfolio Website',
+        desc: 'Personal portfolio website built with React, featuring a clean dark UI.',
+        tags: ['React', 'CSS', 'JavaScript'],
+        cls: 'p', emoji: '💻',
+      },
+      {
+        title: 'Weather App',
+        desc: 'Weather application using OpenWeatherMap API and vanilla JavaScript.',
+        tags: ['JavaScript', 'API', 'HTML'],
+        cls: 'w', emoji: '🌤',
+      },
+      {
+        title: 'LED Control via Web',
+        desc: 'Control GPIO pins of Raspberry Pi via a web interface over local network.',
+        tags: ['Python', 'Flask', 'IoT'],
+        cls: 'l', emoji: '💡',
+      },
+    ];
+
+    function App() {
+      const [page, setPage] = useState('home');
+      const [sent, setSent] = useState(false);
+
+      const navTo = (id) => { setPage(id); window.scrollTo(0,0); };
+
+      return (
+        <>
+          {/* Sidebar */}
+          <nav id="sidebar">
+            <div className="logo">GM</div>
+            <div className="nav-links">
+              {NAV.map(n => (
+                <button
+                  key={n.id}
+                  className={`nav-item ${page === n.id ? 'active' : ''}`}
+                  onClick={() => navTo(n.id)}
+                >
+                  <span className="nav-icon">
+                    {n.id === 'skills' ? <span style={{fontFamily:'monospace',fontSize:13}}>&lt;/&gt;</span> : n.icon}
+                  </span>
+                  {n.label}
+                  <span className="dot"/>
+                </button>
+              ))}
+            </div>
+            <div className="social-links">
+              <a href="#" aria-label="GitHub">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6V20.8c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.5-.3-5.1-1.3-5.1-5.6 0-1.2.4-2.2 1.1-3-.1-.3-.5-1.4.1-3 0 0 .9-.3 3 1.1a10.5 10.5 0 0 1 5.5 0c2.1-1.4 3-1.1 3-1.1.6 1.6.2 2.7.1 3 .7.8 1.1 1.8 1.1 3 0 4.3-2.6 5.3-5.1 5.6.4.3.8 1 .8 2v3c0 .4.2.7.8.6C20.2 21.4 23.5 17.1 23.5 12 23.5 5.65 18.35.5 12 .5z"/>
+                </svg>
+              </a>
+              <a href="#" aria-label="LinkedIn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.37V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.73V1.73C24 .77 23.21 0 22.23 0z"/>
+                </svg>
+              </a>
+              <a href="#" aria-label="Instagram">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </a>
+            </div>
+            <p className="copyright">© 2024 Girija M</p>
+          </nav>
+
+          {/* Main */}
+          <div id="main">
+            <div className="topbar">
+              <div className="theme-toggle">
+                <span>☀️</span>
+                <span>🌙</span>
+              </div>
+            </div>
+
+            {/* HOME */}
+            <section className={page === 'home' ? 'active' : ''}>
+              <div className="hero">
+                <div className="hero-text">
+                  <p className="greet">Hi, I'm</p>
+                  <h1>Girija M</h1>
+                  <p className="role">Electronics &amp; Communication Student</p>
+                  <p>Passionate about Web Development and IoT. I love building modern and user-friendly web experiences.</p>
+                  <a href="#" className="btn-resume">
+                    <span>⬇</span> Download Resume
+                  </a>
+                </div>
+                <div className="hero-img">
+                  <div className="circle-bg">
+                    <div className="placeholder-avatar">👩‍💻</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="cards-row">
+                {/* About Me card */}
+                <div className="card">
+                  <p className="card-title">About Me</p>
+                  <div className="card-divider"/>
+                  <p>I'm a final year ECE student who is passionate about technology and coding. I enjoy turning ideas into real-world solutions.</p>
+                  <button className="btn-read" onClick={() => navTo('about')}>Read More &rarr;</button>
+                </div>
+
+                {/* Skills card */}
+                <div className="card">
+                  <p className="card-title">Skills</p>
+                  <div className="card-divider"/>
+                  {SKILLS.slice(0,5).map(s => (
+                    <div className="skill-bar-row" key={s.name}>
+                      <span className="skill-icon">{s.icon}</span>
+                      <span className="skill-name">{s.name}</span>
+                      <div className="skill-bar-bg">
+                        <div className="skill-bar-fill" style={{width: s.pct + '%'}}/>
+                      </div>
+                      <span className="skill-pct">{s.pct}%</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Projects card */}
+                <div className="card">
+                  <div className="proj-header">
+                    <p className="card-title">Projects</p>
+                    <span className="view-all" onClick={() => navTo('projects')}>View All</span>
+                  </div>
+                  <div className="card-divider"/>
+                  {PROJECTS.slice(0,3).map(p => (
+                    <div className="proj-item" key={p.title}>
+                      <div className={`proj-thumb thumb ${p.cls}`} style={{display:'flex',alignItems:'center',justifyContent:'center',fontSize:22}}>
+                        {p.emoji}
+                      </div>
+                      <div className="proj-info">
+                        <h4>{p.title}</h4>
+                        <p>{p.desc.substring(0,60)}...</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* ABOUT */}
+            <section className={page === 'about' ? 'active' : ''}>
+              <div className="about-grid">
+                <div className="about-left">
+                  <p className="section-label">About Me</p>
+                  <h2>Who am I?</h2>
+                  <p>I'm Girija M, a final year Electronics and Communication Engineering student with a deep passion for web development and IoT. I believe in bridging the gap between hardware and software to create innovative solutions.</p>
+                  <p>When I'm not coding, I enjoy exploring new technologies, working on embedded systems projects, and learning about the latest trends in the tech world.</p>
+                  <div className="info-grid">
+                    {[
+                      ['Name',   'Girija M'],
+                      ['Degree', 'B.E. ECE'],
+                      ['Year',   'Final Year'],
+                      ['Email',  'girija@email.com'],
+                      ['Focus',  'Web + IoT'],
+                      ['Status', 'Open to Work'],
+                    ].map(([l,v]) => (
+                      <div className="info-item" key={l}>
+                        <div className="label">{l}</div>
+                        <div className="value">{v}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="about-img-wrap">
+                  <div className="circle-lg">👩‍🎓</div>
+                </div>
+              </div>
+            </section>
+
+            {/* SKILLS */}
+            <section className={page === 'skills' ? 'active' : ''}>
+              <div className="skills-section">
+                <p style={{fontSize:11,letterSpacing:2.5,textTransform:'uppercase',color:'var(--purple-light)',marginBottom:8}}>What I Know</p>
+                <h2 className="section-heading">My Skills</h2>
+                <p className="section-sub">Technologies and tools I work with</p>
+                <div className="skills-grid">
+                  {SKILLS.map(s => (
+                    <div className="skill-full-row" key={s.name}>
+                      <div className="skill-full-header">
+                        <span>{s.icon} {s.name}</span>
+                        <span style={{color:'var(--purple-light)'}}>{s.pct}%</span>
+                      </div>
+                      <div className="skill-full-bar-bg">
+                        <div className="skill-full-bar-fill" style={{width: s.pct+'%'}}/>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="tech-chips">
+                  {['HTML5','CSS3','JavaScript','React','Git','GitHub','Arduino','Raspberry Pi','Python','Flask','Node.js','VS Code'].map(t => (
+                    <span className="chip" key={t}>{t}</span>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* PROJECTS */}
+            <section className={page === 'projects' ? 'active' : ''}>
+              <div className="projects-section">
+                <p style={{fontSize:11,letterSpacing:2.5,textTransform:'uppercase',color:'var(--purple-light)',marginBottom:8}}>What I've Built</p>
+                <h2 className="section-heading">Projects</h2>
+                <div className="projects-grid">
+                  {PROJECTS.map(p => (
+                    <div className="project-card" key={p.title}>
+                      <div className={`thumb ${p.cls}`} style={{display:'flex',alignItems:'center',justifyContent:'center',fontSize:50}}>
+                        {p.emoji}
+                      </div>
+                      <div className="info">
+                        <h3>{p.title}</h3>
+                        <p>{p.desc}</p>
+                        <div className="tags">
+                          {p.tags.map(t => <span className="tag" key={t}>{t}</span>)}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* CONTACT */}
+            <section className={page === 'contact' ? 'active' : ''}>
+              <div className="contact-section">
+                <p style={{fontSize:11,letterSpacing:2.5,textTransform:'uppercase',color:'var(--purple-light)',marginBottom:8}}>Get In Touch</p>
+                <h2 className="section-heading">Contact Me</h2>
+                <div className="contact-grid">
+                  <div className="contact-info">
+                    <h3>Let's talk!</h3>
+                    <p>Whether you have a project in mind, want to collaborate, or just want to say hi — my inbox is always open.</p>
+                    {[
+                      {icon:'📧', label:'Email',    val:'girija@email.com'},
+                      {icon:'📍', label:'Location', val:'Tamil Nadu, India'},
+                      {icon:'💼', label:'LinkedIn', val:'linkedin.com/in/girija-m'},
+                    ].map(c => (
+                      <div className="contact-item" key={c.label}>
+                        <div className="contact-icon">{c.icon}</div>
+                        <div>
+                          <div className="contact-label">{c.label}</div>
+                          <div className="contact-val">{c.val}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="contact-form">
+                    <div className="form-group">
+                      <label>Name</label>
+                      <input type="text" placeholder="Your name"/>
+                    </div>
+                    <div className="form-group">
+                      <label>Email</label>
+                      <input type="email" placeholder="your@email.com"/>
+                    </div>
+                    <div className="form-group">
+                      <label>Message</label>
+                      <textarea rows="5" placeholder="Write your message..."/>
+                    </div>
+                    <button className="btn-send" onClick={() => setSent(true)}>
+                      {sent ? '✅ Message Sent!' : 'Send Message'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
